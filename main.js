@@ -6,19 +6,18 @@ const fs = require('fs');
 
 const client = new Discord.Client();
 const commands = new Command.Commands();
-let rawdata = fs.readFileSync('data.json');
-let data = JSON.parse(rawdata);
+const data = JSON.parse(fs.readFileSync('data.json'));
 
 client.on('ready', () => {
     console.log(`Connected as ${client.user.tag}`);
 });
 
 client.on('message', msg => {
-    if (msg.author.id === client.user.id)
+    if (msg.author.bot || !(msg.content.startsWith(data.prefix)))
         return;
     var content = msg.content.split(' ');
     for (var item of commands.cmd) {
-        if (content[0] === `${data.flag}${Object.keys(item)}`) {
+        if (content[0] === `${data.prefix}${Object.keys(item)}`) {
             Object.values(item)[0](msg, client);
             break;
         }
